@@ -1,0 +1,11 @@
+{% extends 'home.html' %}
+{% block title %}Register – Evently, Event Matching Site{% endblock %}
+{% block content %}
+<h2>Create an account</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
+<p>Already have an account? Sign In <a href="/accounts/login/">Login</a></p>
+{% endblock %}

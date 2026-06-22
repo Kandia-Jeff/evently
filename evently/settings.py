@@ -22,7 +22,7 @@ INSTALLED_APPS = [
     'flagging',
     'analytics',
     'core',
-]
+]   
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
