@@ -33,6 +33,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
 
+    # Organiser verification
+    verification_document = models.FileField(upload_to='verification_docs/', blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    verification_status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected'),
+        ],
+        default='pending'
+    )
+    verification_notes = models.TextField(blank=True)
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
@@ -43,6 +57,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return self.username
+
+    def is_organiser(self):
+        return self.role == 'organiser'
+
+    def is_attendee(self):
+        return self.role == 'attendee'
 
 
 class Profile(models.Model):

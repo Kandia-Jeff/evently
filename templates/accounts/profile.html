@@ -1,0 +1,24 @@
+{% extends 'home.html' %}
+
+{% block title %}Profile - Evently{% endblock %}
+
+{% block content %}
+<h2>My Profile</h2>
+<p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+<p><strong>Role:</strong> {{ user.get_role_display }}</p>
+<p><strong>Phone:</strong> {{ user.phone }}</p>
+<p><strong>Location:</strong> {{ user.location }}</p>
+
+{% if user.role == 'organiser' %}
+    <p><strong>Verification:</strong>
+        {% if user.is_verified %}
+            ✅ Verified Organiser
+        {% else %}
+            ❌ Not Verified —
+            <a href="{% url 'verification_submit' %}">Submit Documents</a>
+            | <a href="{% url 'verification_status' %}">Check Status</a>
+        {% endif %}
+    </p>
+{% endif %}
+{% endblock %}

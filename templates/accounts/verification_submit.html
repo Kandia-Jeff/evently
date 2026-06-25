@@ -1,0 +1,14 @@
+{% extends 'home.html' %}
+
+{% block title %}Submit Verification - Evently{% endblock %}
+
+{% block content %}
+<h2>Organiser Verification</h2>
+<p>Upload an official document to verify your identity as an organiser. Accepted formats: PDF, JPG, PNG. Max size: 5MB.</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit for Review</button>
+</form>
+{% endblock %}

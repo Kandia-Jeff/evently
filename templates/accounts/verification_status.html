@@ -1,0 +1,26 @@
+{% extends 'home.html' %}
+
+{% block title %}Verification Status - Evently{% endblock %}
+
+{% block content %}
+<h2>Verification Status</h2>
+
+{% if user.role == 'organiser' %}
+    {% if user.verification_status == 'approved' %}
+        <p>✅ Your account is verified. You can now create events.</p>
+    {% elif user.verification_status == 'pending' %}
+        <p>⏳ Your verification document is under review. We will notify you by email once reviewed.</p>
+    {% elif user.verification_status == 'rejected' %}
+        <p>❌ Your verification was rejected.</p>
+        {% if user.verification_notes %}
+            <p><strong>Reason:</strong> {{ user.verification_notes }}</p>
+        {% endif %}
+        <a href="{% url 'verification_submit' %}">Resubmit Document</a>
+    {% else %}
+        <p>You have not submitted a verification document yet.</p>
+        <a href="{% url 'verification_submit' %}">Submit Now</a>
+    {% endif %}
+{% else %}
+    <p>Verification is only required for organisers.</p>
+{% endif %}
+{% endblock %}
