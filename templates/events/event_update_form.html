@@ -1,0 +1,13 @@
+{% extends 'home.html' %}
+
+{% block title %}Post Update - Evently{% endblock %}
+
+{% block content %}
+<h2>Post Update for {{ event.title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post Update</button>
+</form>
+<a href="{% url 'event_detail' event.pk %}">Cancel</a>
+{% endblock %}

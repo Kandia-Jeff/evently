@@ -1,0 +1,29 @@
+{% extends 'home.html' %}
+
+{% block title %}{{ event.title }} - Evently{% endblock %}
+
+{% block content %}
+<h2>{{ event.title }}</h2>
+<p><strong>Category:</strong> {{ event.get_category_display }}</p>
+<p><strong>Location:</strong> {{ event.location }}</p>
+<p><strong>Date:</strong> {{ event.date }}</p>
+<p><strong>Time:</strong> {{ event.time }}</p>
+<p><strong>Organiser:</strong> {{ event.organiser.username }}</p>
+{% if event.banner %}
+    <img src="{{ event.banner.url }}" alt="{{ event.title }}" width="400">
+{% endif %}
+<p>{{ event.description }}</p>
+
+{% if updates %}
+    <h3>Updates</h3>
+    {% for update in updates %}
+        <p>{{ update.message }} — <small>{{ update.created_at }}</small></p>
+    {% endfor %}
+{% endif %}
+
+{% if user.is_authenticated and user.role == 'organiser' and event.organiser == user %}
+    <a href="{% url 'event_edit' event.pk %}">Edit Event</a>
+    <a href="{% url 'event_delete' event.pk %}">Delete Event</a>
+    <a href="{% url 'event_update_post' event.pk %}">Post Update</a>
+{% endif %}
+{% endblock %}

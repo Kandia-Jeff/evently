@@ -1,0 +1,22 @@
+{% extends 'home.html' %}
+
+{% block title %}Organiser Dashboard - Evently{% endblock %}
+
+{% block content %}
+<h2>My Events</h2>
+<a href="{% url 'event_create' %}">+ Create New Event</a>
+
+{% if events %}
+    {% for event in events %}
+        <div>
+            <h3>{{ event.title }}</h3>
+            <p>{{ event.date }} | {{ event.location }} | Status: {{ event.get_status_display }}</p>
+            <a href="{% url 'event_edit' event.pk %}">Edit</a>
+            <a href="{% url 'event_delete' event.pk %}">Delete</a>
+            <a href="{% url 'event_update_post' event.pk %}">Post Update</a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>You have not created any events yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'home.html' %}
+
+{% block title %}Events - Evently{% endblock %}
+
+{% block content %}
+<h2>Upcoming Events</h2>
+{% if events %}
+    {% for event in events %}
+        <div>
+            <h3><a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a></h3>
+            <p>{{ event.category }} | {{ event.location }} | {{ event.date }}</p>
+            <p>{{ event.description|truncatewords:20 }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No events available at the moment.</p>
+{% endif %}
+
+{% if user.is_authenticated and user.role == 'organiser' %}
+    <a href="{% url 'event_create' %}">Create New Event</a>
+{% endif %}
+{% endblock %}
