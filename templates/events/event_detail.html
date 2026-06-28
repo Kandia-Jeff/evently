@@ -26,4 +26,15 @@
     <a href="{% url 'event_delete' event.pk %}">Delete Event</a>
     <a href="{% url 'event_update_post' event.pk %}">Post Update</a>
 {% endif %}
+
+{% if user.is_authenticated and user != event.organiser %}
+    <a href="/flagging/event/{{ event.pk }}/">Flag this Event</a>
+{% endif %}
+
+<hr>
+<a href="/feedback/event/{{ event.pk }}/">View Feedback ({{ event.feedback.count }})</a>
+
+{% if user.is_authenticated and user.role == 'attendee' %}
+    <a href="/feedback/event/{{ event.pk }}/leave/">Leave Feedback</a>
+{% endif %}
 {% endblock %}

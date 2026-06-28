@@ -1,0 +1,21 @@
+{% extends 'home.html' %}
+{% block title %}Feedback – {{ event.title }}{% endblock %}
+{% block content %}
+<h2>Feedback for {{ event.title }}</h2>
+<p><strong>Average Rating:</strong> {{ avg_rating }}★</p>
+
+{% if feedback_list %}
+    {% for feedback in feedback_list %}
+        <div>
+            <p><strong>{{ feedback.user.username }}</strong> — {{ feedback.rating }}★</p>
+            <p>{{ feedback.comment }}</p>
+            <small>{{ feedback.created_at }}</small>
+        </div>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No feedback yet.</p>
+{% endif %}
+
+<a href="/events/{{ event.pk }}/">Back to Event</a>
+{% endblock %}

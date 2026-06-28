@@ -1,0 +1,25 @@
+{% extends 'home.html' %}
+{% block title %}Search – Evently{% endblock %}
+{% block content %}
+<h2>Search Events</h2>
+
+<form method="get" action="/search/">
+    <input type="text" name="q" placeholder="Search by name..." value="{{ query }}">
+    <input type="text" name="category" placeholder="Event type..." value="{{ category }}">
+    <input type="text" name="location" placeholder="Location..." value="{{ location }}">
+    <button type="submit">Search</button>
+</form>
+
+<hr>
+
+{% if events %}
+    {% for event in events %}
+        <div>
+            <h3><a href="/events/{{ event.pk }}/">{{ event.title }}</a></h3>
+            <p>{{ event.category }} | {{ event.location }} | {{ event.date }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No events found.</p>
+{% endif %}
+{% endblock %}

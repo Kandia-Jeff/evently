@@ -1,0 +1,12 @@
+{% extends 'home.html' %}
+{% block title %}Flag Event – {{ event.title }}{% endblock %}
+{% block content %}
+<h2>Flag "{{ event.title }}"</h2>
+<p>Please describe why you are flagging this event.</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Flag</button>
+</form>
+<a href="/events/{{ event.pk }}/">Cancel</a>
+{% endblock %}

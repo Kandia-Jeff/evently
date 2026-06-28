@@ -1,0 +1,20 @@
+{% extends 'home.html' %}
+{% block title %}Flagged Events – Admin{% endblock %}
+{% block content %}
+<h2>Flagged Events</h2>
+
+{% if flags %}
+    {% for flag in flags %}
+        <div>
+            <p><strong>Event:</strong> {{ flag.event.title }}</p>
+            <p><strong>Flagged by:</strong> {{ flag.user.username }}</p>
+            <p><strong>Reason:</strong> {{ flag.reason }}</p>
+            <p><strong>Status:</strong> {{ flag.fl_status }}</p>
+            <a href="/flagging/admin/flags/{{ flag.pk }}/review/">Review</a>
+        </div>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No flags yet.</p>
+{% endif %}
+{% endblock %}
