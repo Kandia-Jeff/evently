@@ -4,6 +4,7 @@ from django.contrib import messages
 from events.models import Event
 from .models import Flag
 from .forms import FlagForm
+from accounts.emails import send_flag_notification_email
 
 
 @login_required
@@ -22,6 +23,7 @@ def flag_event(request, event_pk):
             flag.event = event
             flag.user = request.user
             flag.save()
+            send_flag_notification_email(flag)
             messages.success(request, 'Event flagged successfully. Admin will review it.')
             return redirect('event_detail', pk=event_pk)
     else:

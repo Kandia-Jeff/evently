@@ -1,13 +1,15 @@
 {% extends 'home.html' %}
-
 {% block title %}Delete Event - Evently{% endblock %}
-
 {% block content %}
-<h2>Delete Event</h2>
-<p>Are you sure you want to delete <strong>{{ event.title }}</strong>? This cannot be undone.</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, Delete</button>
-</form>
-<a href="{% url 'organiser_dashboard' %}">Cancel</a>
+<div class="form-container">
+    <h2>Delete Event</h2>
+    <p style="color:#6b7280;margin-bottom:24px;">Are you sure you want to delete <strong>{{ event.title }}</strong>? This cannot be undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div style="display:flex;gap:12px;">
+            <button type="submit" class="btn btn-danger" style="width:auto;">Yes, Delete</button>
+            <a href="{% url 'organiser_dashboard' %}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

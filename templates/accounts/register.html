@@ -1,11 +1,35 @@
 {% extends 'home.html' %}
-{% block title %}Register – Evently, Event Matching Site{% endblock %}
+{% block title %}Register - Evently{% endblock %}
 {% block content %}
-<h2>Create an account</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
-<p>Already have an account? Sign In <a href="/accounts/login/">Login</a></p>
+<div class="form-container">
+    <h2>Create Your Account</h2>
+    <p class="form-subtitle">Personalised event matching for Nairobi — verified organisers, real events.</p>
+
+    <div class="role-tabs">
+        <button type="button" class="active" onclick="setRole('attendee', this)">Attendee</button>
+        <button type="button" onclick="setRole('organiser', this)">Organiser</button>
+    </div>
+
+    <form method="post" id="register-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Create Account</button>
+    </form>
+
+    <div class="form-footer">
+        Already have an account? <a href="{% url 'login' %}">Login</a>
+    </div>
+</div>
 {% endblock %}

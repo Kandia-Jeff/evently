@@ -1,0 +1,99 @@
+{% extends 'home.html' %}
+{% block title %}Platform Analytics - Evently{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>Platform Analytics</h2>
+    <p>Overview of all activity on Evently</p>
+</div>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_users }}</div>
+        <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_events }}</div>
+        <div class="stat-label">Total Events</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_views }}</div>
+        <div class="stat-label">Total Views</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ pending_flags }}</div>
+        <div class="stat-label">Pending Flags</div>
+    </div>
+</div>
+
+<div class="analytics-section">
+    <h3>Users</h3>
+    <div class="stats-row" style="margin-bottom:0;">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_attendees }}</div>
+            <div class="stat-label">Attendees</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_organisers }}</div>
+            <div class="stat-label">Organisers</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ verified_organisers }}</div>
+            <div class="stat-label">Verified Organisers</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_feedback }}</div>
+            <div class="stat-label">Total Feedback</div>
+        </div>
+    </div>
+</div>
+
+<div class="analytics-section">
+    <h3>Events</h3>
+    <div class="stats-row" style="margin-bottom:0;">
+        <div class="stat-card">
+            <div class="stat-number">{{ approved_events }}</div>
+            <div class="stat-label">Approved</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ pending_events }}</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ rejected_events }}</div>
+            <div class="stat-label">Rejected</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_flags }}</div>
+            <div class="stat-label">Total Flags</div>
+        </div>
+    </div>
+</div>
+
+<div class="analytics-section">
+    <h3>Top 5 Most Viewed Events</h3>
+    {% if top_events %}
+        <div class="table-container" style="box-shadow:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Organiser</th>
+                        <th>Views</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in top_events %}
+                        <tr>
+                            <td><a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a></td>
+                            <td>{{ event.organiser.username }}</td>
+                            <td>{{ event.view_count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p style="color:#6b7280;">No data yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

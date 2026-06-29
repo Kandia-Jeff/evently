@@ -1,18 +1,39 @@
 {% extends 'home.html' %}
-{% block title %}Matched Events – Evently{% endblock %}
+{% block title %}Matched Events - Evently{% endblock %}
 {% block content %}
-<h2>Events Matched For You</h2>
+<div class="page-header">
+    <h2>Events Matched For You</h2>
+    <p>Based on your interests and location</p>
+</div>
 
 {% if events %}
-    {% for event in events %}
-        <div>
-            <h3><a href="/events/{{ event.pk }}/">{{ event.title }}</a></h3>
-            <p>{{ event.category }} | {{ event.location }} | {{ event.date }}</p>
-        </div>
-    {% empty %}
-        <p>No matched events found. Update your interests and location in your profile.</p>
-    {% endfor %}
+    <div class="events-grid">
+        {% for event in events %}
+            <div class="event-card">
+                <div class="event-banner">
+                    {% if event.banner %}
+                        <img src="{{ event.banner.url }}" alt="{{ event.title }}">
+                    {% else %}
+                        <div style="width:100%;height:160px;background:#e8eaf0;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:13px;">No Image</div>
+                    {% endif %}
+                </div>
+                <div class="event-body">
+                    <span class="event-category">{{ event.get_category_display }}</span>
+                    <h3><a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a></h3>
+                    <div class="event-meta">
+                        <span>📍 {{ event.location }}</span>
+                        <span>📅 {{ event.date }}</span>
+                    </div>
+                    <div class="event-actions">
+                        <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% else %}
-    <p>No matched events found. Update your interests and location in your profile.</p>
+    <div class="card" style="text-align:center;padding:40px;">
+        <p style="color:#6b7280;">No matched events found. Update your interests and location in your profile.</p>
+    </div>
 {% endif %}
 {% endblock %}

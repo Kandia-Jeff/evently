@@ -1,20 +1,41 @@
 {% extends 'home.html' %}
-{% block title %}Flagged Events – Admin{% endblock %}
+{% block title %}Flagged Events - Evently{% endblock %}
 {% block content %}
-<h2>Flagged Events</h2>
+<div class="page-header">
+    <h2>Flagged Events</h2>
+    <p>Review and action reports submitted by users</p>
+</div>
 
 {% if flags %}
-    {% for flag in flags %}
-        <div>
-            <p><strong>Event:</strong> {{ flag.event.title }}</p>
-            <p><strong>Flagged by:</strong> {{ flag.user.username }}</p>
-            <p><strong>Reason:</strong> {{ flag.reason }}</p>
-            <p><strong>Status:</strong> {{ flag.fl_status }}</p>
-            <a href="/flagging/admin/flags/{{ flag.pk }}/review/">Review</a>
-        </div>
-        <hr>
-    {% endfor %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Flagged By</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flag in flags %}
+                    <tr>
+                        <td><strong>{{ flag.event.title }}</strong></td>
+                        <td>{{ flag.user.username }}</td>
+                        <td style="max-width:200px;">{{ flag.reason|truncatewords:10 }}</td>
+                        <td><span class="badge badge-{{ flag.fl_status }}">{{ flag.fl_status|capfirst }}</span></td>
+                        <td>{{ flag.created_at|date:"d M Y" }}</td>
+                        <td><a href="/flagging/admin/flags/{{ flag.pk }}/review/" class="btn btn-secondary btn-sm">Review</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% else %}
-    <p>No flags yet.</p>
+    <div class="card" style="text-align:center;padding:60px;">
+        <p style="color:#6b7280;">No flags submitted yet.</p>
+    </div>
 {% endif %}
 {% endblock %}

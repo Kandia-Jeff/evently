@@ -1,40 +1,78 @@
 {% extends 'home.html' %}
-
 {% block title %}{{ event.title }} - Evently{% endblock %}
-
 {% block content %}
-<h2>{{ event.title }}</h2>
-<p><strong>Category:</strong> {{ event.get_category_display }}</p>
-<p><strong>Location:</strong> {{ event.location }}</p>
-<p><strong>Date:</strong> {{ event.date }}</p>
-<p><strong>Time:</strong> {{ event.time }}</p>
-<p><strong>Organiser:</strong> {{ event.organiser.username }}</p>
-{% if event.banner %}
-    <img src="{{ event.banner.url }}" alt="{{ event.title }}" width="400">
-{% endif %}
-<p>{{ event.description }}</p>
+<div class="event-detail-container">
+    <div class="event-detail-main">
+        <div class="event-banner-large">
+            {% if event.banner %}
+                <img src="{{ event.banner.url }}" alt="{{ event.title }}">
+            {% else %}
+                <div style="width:100%;height:320px;background:#e8eaf0;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#9ca3af;">No Image</div>
+            {% endif %}
+        </div>
 
-{% if updates %}
-    <h3>Updates</h3>
-    {% for update in updates %}
-        <p>{{ update.message }} — <small>{{ update.created_at }}</small></p>
-    {% endfor %}
-{% endif %}
+        <span class="event-category">{{ event.get_category_display }}</span>
+        <h2 style="margin:12px 0;">{{ event.title }}</h2>
+        <span class="badge badge-{{ event.status }}">{{ event.get_status_display }}</span>
 
-{% if user.is_authenticated and user.role == 'organiser' and event.organiser == user %}
-    <a href="{% url 'event_edit' event.pk %}">Edit Event</a>
-    <a href="{% url 'event_delete' event.pk %}">Delete Event</a>
-    <a href="{% url 'event_update_post' event.pk %}">Post Update</a>
-{% endif %}
+        <p style="margin-top:16px;color:#374151;line-height:1.7;">{{ event.description }}</p>
 
-{% if user.is_authenticated and user != event.organiser %}
-    <a href="/flagging/event/{{ event.pk }}/">Flag this Event</a>
-{% endif %}
+        {% if updates %}
+            <div class="card" style="margin-top:28px;">
+                <h3 style="margin-bottom:16px;">Updates</h3>
+                {% for update in updates %}
+                    <div class="feedback-item">
+                        <p class="feedback-comment">{{ update.message }}</p>
+                        <p class="feedback-date">{{ update.created_at|date:"d M Y, H:i" }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-<hr>
-<a href="/feedback/event/{{ event.pk }}/">View Feedback ({{ event.feedback.count }})</a>
+        {% if user.is_authenticated and user.role == 'organiser' and event.organiser == user %}
+            <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="{% url 'event_edit' event.pk %}" class="btn btn-secondary btn-sm">Edit Event</a>
+                <a href="{% url 'event_delete' event.pk %}" class="btn btn-danger btn-sm">Delete Event</a>
+                <a href="{% url 'event_update_post' event.pk %}" class="btn btn-outline btn-sm">Post Update</a>
+            </div>
+        {% endif %}
 
-{% if user.is_authenticated and user.role == 'attendee' %}
-    <a href="/feedback/event/{{ event.pk }}/leave/">Leave Feedback</a>
-{% endif %}
+        {% if user.is_authenticated and user != event.organiser %}
+            <div style="margin-top:16px;">
+                <a href="/flagging/event/{{ event.pk }}/" class="btn btn-outline btn-sm">🚩 Flag this Event</a>
+            </div>
+        {% endif %}
+
+        <div class="card" style="margin-top:28px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3>Ratings & Reviews</h3>
+                <a href="/feedback/event/{{ event.pk }}/" class="btn btn-outline btn-sm">View All ({{ event.feedback.count }})</a>
+            </div>
+            {% if user.is_authenticated and user.role == 'attendee' %}
+                <a href="/feedback/event/{{ event.pk }}/leave/" class="btn btn-primary btn-sm">Leave Feedback</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="event-detail-sidebar">
+        <h4>Event Details</h4>
+        <ul class="event-meta-list">
+            <li>📅 <strong>Date:</strong> {{ event.date }}</li>
+            <li>🕐 <strong>Time:</strong> {{ event.time }}</li>
+            <li>📍 <strong>Location:</strong> {{ event.location }}</li>
+            <li>🏷️ <strong>Category:</strong> {{ event.get_category_display }}</li>
+        </ul>
+
+        <h4>Organiser</h4>
+        <div class="organiser-info">
+            <div class="organiser-avatar">👤</div>
+            <div>
+                <strong>{{ event.organiser.username }}</strong>
+                {% if event.organiser.is_verified %}
+                    <br><span class="badge badge-verified" style="font-size:11px;">✅ Verified</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

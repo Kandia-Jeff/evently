@@ -16,5 +16,6 @@ urlpatterns = [
     path('search/', include('search.urls')),
     path('feedback/', include('feedback.urls')),
     path('flagging/', include('flagging.urls')),
+    path('analytics/', include('analytics.urls')),
     path('', home_view, name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

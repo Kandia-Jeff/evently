@@ -1,13 +1,31 @@
 {% extends 'home.html' %}
-
 {% block title %}{{ action }} Event - Evently{% endblock %}
-
 {% block content %}
-<h2>{{ action }} Event</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">{{ action }} Event</button>
-</form>
-<a href="{% url 'organiser_dashboard' %}">Cancel</a>
+<div class="page-header">
+    <h2>{{ action }} Event</h2>
+    <p>Fill in the details below. Your event will be reviewed before going live.</p>
+</div>
+
+<div class="card" style="max-width:800px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <div style="margin-bottom:16px;">
+                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div style="display:flex;gap:12px;margin-top:8px;">
+            <button type="submit" class="btn btn-primary">{{ action }} Event</button>
+            <a href="{% url 'organiser_dashboard' %}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

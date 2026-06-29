@@ -1,20 +1,36 @@
 {% extends 'home.html' %}
-{% block title %}Flagged Events – Admin{% endblock %}
+{% block title %}Review Flag - Evently{% endblock %}
 {% block content %}
-<h2>Flagged Events</h2>
+<div class="page-header">
+    <h2>Review Flag</h2>
+</div>
 
-{% if flags %}
-    {% for flag in flags %}
-        <div>
-            <p><strong>Event:</strong> {{ flag.event.title }}</p>
-            <p><strong>Flagged by:</strong> {{ flag.user.username }}</p>
-            <p><strong>Reason:</strong> {{ flag.reason }}</p>
-            <p><strong>Status:</strong> {{ flag.fl_status }}</p>
-            <a href="/flagging/admin/flags/{{ flag.pk }}/review/">Review</a>
-        </div>
-        <hr>
-    {% endfor %}
-{% else %}
-    <p>No flags yet.</p>
-{% endif %}
+<div class="card" style="max-width:600px;">
+    <div class="info-row" style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3f4f6;">
+        <span style="font-weight:600;">Event</span>
+        <span>{{ flag.event.title }}</span>
+    </div>
+    <div class="info-row" style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3f4f6;">
+        <span style="font-weight:600;">Flagged By</span>
+        <span>{{ flag.user.username }}</span>
+    </div>
+    <div class="info-row" style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3f4f6;">
+        <span style="font-weight:600;">Status</span>
+        <span><span class="badge badge-{{ flag.fl_status }}">{{ flag.fl_status|capfirst }}</span></span>
+    </div>
+    <div style="padding:16px 0;">
+        <strong>Reason:</strong>
+        <p style="margin-top:8px;color:#374151;">{{ flag.reason }}</p>
+    </div>
+
+    <form method="post" style="display:flex;gap:12px;margin-top:16px;">
+        {% csrf_token %}
+        <button type="submit" name="action" value="approve" class="btn btn-danger">Approve Flag & Cancel Event</button>
+        <button type="submit" name="action" value="reject" class="btn btn-success">Reject Flag</button>
+    </form>
+
+    <div style="margin-top:16px;">
+        <a href="{% url 'flag_list' %}" class="btn btn-outline btn-sm">Back to Flags</a>
+    </div>
+</div>
 {% endblock %}

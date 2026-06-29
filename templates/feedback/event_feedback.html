@@ -1,21 +1,31 @@
 {% extends 'home.html' %}
-{% block title %}Feedback – {{ event.title }}{% endblock %}
+{% block title %}Feedback - {{ event.title }}{% endblock %}
 {% block content %}
-<h2>Feedback for {{ event.title }}</h2>
-<p><strong>Average Rating:</strong> {{ avg_rating }}★</p>
+<div class="page-header">
+    <h2>Feedback for {{ event.title }}</h2>
+    <a href="{% url 'event_detail' event.pk %}" class="btn btn-outline btn-sm">Back to Event</a>
+</div>
+
+<div class="card" style="text-align:center;padding:32px;margin-bottom:24px;">
+    <div class="rating-display">{{ avg_rating }}</div>
+    <div class="rating-stars">★★★★★</div>
+    <p style="color:#6b7280;font-size:14px;">{{ feedback_list.count }} review{{ feedback_list.count|pluralize }}</p>
+</div>
 
 {% if feedback_list %}
     {% for feedback in feedback_list %}
-        <div>
-            <p><strong>{{ feedback.user.username }}</strong> — {{ feedback.rating }}★</p>
-            <p>{{ feedback.comment }}</p>
-            <small>{{ feedback.created_at }}</small>
+        <div class="feedback-item">
+            <div class="feedback-header">
+                <span class="feedback-user">{{ feedback.user.username }}</span>
+                <span class="feedback-rating">{{ feedback.rating }}★</span>
+            </div>
+            <p class="feedback-comment">{{ feedback.comment }}</p>
+            <p class="feedback-date">{{ feedback.created_at|date:"d M Y" }}</p>
         </div>
-        <hr>
     {% endfor %}
 {% else %}
-    <p>No feedback yet.</p>
+    <div class="card" style="text-align:center;padding:40px;">
+        <p style="color:#6b7280;">No feedback yet for this event.</p>
+    </div>
 {% endif %}
-
-<a href="/events/{{ event.pk }}/">Back to Event</a>
 {% endblock %}

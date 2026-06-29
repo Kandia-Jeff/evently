@@ -1,12 +1,29 @@
 {% extends 'home.html' %}
-{% block title %}Flag Event – {{ event.title }}{% endblock %}
+{% block title %}Flag Event - Evently{% endblock %}
 {% block content %}
-<h2>Flag "{{ event.title }}"</h2>
-<p>Please describe why you are flagging this event.</p>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Flag</button>
-</form>
-<a href="/events/{{ event.pk }}/">Cancel</a>
+<div class="form-container">
+    <h2>Flag Event</h2>
+    <p class="form-subtitle">{{ event.title }}</p>
+    <p style="color:#6b7280;margin-bottom:20px;">Please describe why you are flagging this event. Admin will review your report.</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div>
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Submit Flag</button>
+    </form>
+    <div class="form-footer">
+        <a href="{% url 'event_detail' event.pk %}">Cancel</a>
+    </div>
+</div>
 {% endblock %}

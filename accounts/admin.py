@@ -20,17 +20,26 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
     search_fields = ['email', 'username']
-
     actions = ['approve_organisers', 'reject_organisers']
 
     def approve_organisers(self, request, queryset):
-        queryset.filter(role='organiser').update(is_verified=True, verification_status='approved')
-        self.message_user(request, 'Selected organisers have been approved.')
+        from .emails import send_verification_approved_email
+        for user in queryset.filter(role='organiser'):
+            user.is_verified = True
+            user.verification_status = 'approved'
+            user.save()
+            send_verification_approved_email(user)
+        self.message_user(request, 'Selected organisers have been approved and notified.')
     approve_organisers.short_description = 'Approve selected organisers'
 
     def reject_organisers(self, request, queryset):
-        queryset.filter(role='organiser').update(is_verified=False, verification_status='rejected')
-        self.message_user(request, 'Selected organisers have been rejected.')
+        from .emails import send_verification_rejected_email
+        for user in queryset.filter(role='organiser'):
+            user.is_verified = False
+            user.verification_status = 'rejected'
+            user.save()
+            send_verification_rejected_email(user)
+        self.message_user(request, 'Selected organisers have been rejected and notified.')
     reject_organisers.short_description = 'Reject selected organisers'
 
 

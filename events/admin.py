@@ -10,13 +10,21 @@ class EventAdmin(admin.ModelAdmin):
     actions = ['approve_events', 'reject_events']
 
     def approve_events(self, request, queryset):
-        queryset.update(status='approved')
-        self.message_user(request, 'Selected events have been approved.')
+        from accounts.emails import send_event_approved_email
+        for event in queryset:
+            event.status = 'approved'
+            event.save()
+            send_event_approved_email(event)
+        self.message_user(request, 'Selected events have been approved and organisers notified.')
     approve_events.short_description = 'Approve selected events'
 
     def reject_events(self, request, queryset):
-        queryset.update(status='rejected')
-        self.message_user(request, 'Selected events have been rejected.')
+        from accounts.emails import send_event_rejected_email
+        for event in queryset:
+            event.status = 'rejected'
+            event.save()
+            send_event_rejected_email(event)
+        self.message_user(request, 'Selected events have been rejected and organisers notified.')
     reject_events.short_description = 'Reject selected events'
 
 

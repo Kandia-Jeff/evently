@@ -1,11 +1,28 @@
 {% extends 'home.html' %}
-{% block title %}Leave Feedback – {{ event.title }}{% endblock %}
+{% block title %}Leave Feedback - Evently{% endblock %}
 {% block content %}
-<h2>Leave Feedback for {{ event.title }}</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Feedback</button>
-</form>
-<a href="/events/{{ event.pk }}/">Back to Event</a>
+<div class="form-container">
+    <h2>Leave Feedback</h2>
+    <p class="form-subtitle">{{ event.title }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div>
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Submit Feedback</button>
+    </form>
+    <div class="form-footer">
+        <a href="{% url 'event_detail' event.pk %}">Back to Event</a>
+    </div>
+</div>
 {% endblock %}

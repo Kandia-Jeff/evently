@@ -21,7 +21,6 @@ INSTALLED_APPS = [
     'feedback',
     'flagging',
     'analytics',
-    'core',
 ]   
 
 MIDDLEWARE = [

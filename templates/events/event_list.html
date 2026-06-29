@@ -1,22 +1,50 @@
 {% extends 'home.html' %}
-
 {% block title %}Events - Evently{% endblock %}
-
 {% block content %}
-<h2>Upcoming Events</h2>
-{% if events %}
-    {% for event in events %}
-        <div>
-            <h3><a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a></h3>
-            <p>{{ event.category }} | {{ event.location }} | {{ event.date }}</p>
-            <p>{{ event.description|truncatewords:20 }}</p>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>No events available at the moment.</p>
+<div class="page-header">
+    <h2>Upcoming Events</h2>
+    <p>Discover events happening around Nairobi</p>
+</div>
+
+{% if user.is_authenticated and user.role == 'organiser' and user.is_verified %}
+    <div style="margin-bottom: 24px;">
+        <a href="{% url 'event_create' %}" class="btn btn-primary">+ Create New Event</a>
+    </div>
 {% endif %}
 
-{% if user.is_authenticated and user.role == 'organiser' %}
-    <a href="{% url 'event_create' %}">Create New Event</a>
+{% if events %}
+    <div class="events-grid">
+        {% for event in events %}
+            <div class="event-card">
+                <div class="event-banner">
+                    {% if event.banner %}
+                        <img src="{{ event.banner.url }}" alt="{{ event.title }}">
+                    {% else %}
+                        <div style="width:100%;height:160px;background:#e8eaf0;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:13px;">No Image</div>
+                    {% endif %}
+                </div>
+                <div class="event-body">
+                    <span class="event-category">{{ event.get_category_display }}</span>
+                    <h3><a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a></h3>
+                    <div class="event-meta">
+                        <span>📍 {{ event.location }}</span>
+                        <span>📅 {{ event.date }}</span>
+                    </div>
+                    <p style="font-size:13px;color:#6b7280;margin-bottom:12px;">{{ event.description|truncatewords:15 }}</p>
+                    <div class="event-actions">
+                        <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align:center;padding:60px;">
+        <p style="color:#6b7280;font-size:16px;">No events available at the moment.</p>
+        {% if user.is_authenticated and user.role == 'organiser' and user.is_verified %}
+            <br>
+            <a href="{% url 'event_create' %}" class="btn btn-primary">Create the first event</a>
+        {% endif %}
+    </div>
 {% endif %}
 {% endblock %}

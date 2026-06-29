@@ -1,24 +1,58 @@
 {% extends 'home.html' %}
-
 {% block title %}Profile - Evently{% endblock %}
-
 {% block content %}
-<h2>My Profile</h2>
-<p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
-<p><strong>Email:</strong> {{ user.email }}</p>
-<p><strong>Role:</strong> {{ user.get_role_display }}</p>
-<p><strong>Phone:</strong> {{ user.phone }}</p>
-<p><strong>Location:</strong> {{ user.location }}</p>
+<div class="page-header">
+    <h2>My Profile</h2>
+</div>
 
-{% if user.role == 'organiser' %}
-    <p><strong>Verification:</strong>
-        {% if user.is_verified %}
-            ✅ Verified Organiser
-        {% else %}
-            ❌ Not Verified —
-            <a href="{% url 'verification_submit' %}">Submit Documents</a>
-            | <a href="{% url 'verification_status' %}">Check Status</a>
+<div class="profile-container">
+    <div class="profile-sidebar">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-name">{{ user.first_name }} {{ user.last_name }}</div>
+        <div class="profile-role">{{ user.get_role_display }}</div>
+        {% if user.role == 'organiser' %}
+            {% if user.is_verified %}
+                <span class="badge badge-verified">✅ Verified Organiser</span>
+            {% else %}
+                <span class="badge badge-pending">⏳ Unverified</span>
+                <br><br>
+                <a href="{% url 'verification_submit' %}" class="btn btn-primary btn-sm">Submit Documents</a>
+            {% endif %}
         {% endif %}
-    </p>
-{% endif %}
+    </div>
+
+    <div class="profile-info">
+        <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Role</span>
+            <span class="info-value">{{ user.get_role_display }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Member Since</span>
+            <span class="info-value">{{ user.date_joined|date:"F Y" }}</span>
+        </div>
+        {% if user.role == 'organiser' %}
+            <div class="info-row">
+                <span class="info-label">Verification Status</span>
+                <span class="info-value">
+                    <span class="badge badge-{{ user.verification_status }}">{{ user.verification_status|capfirst }}</span>
+                </span>
+            </div>
+            <br>
+            <a href="{% url 'verification_status' %}" class="btn btn-outline btn-sm">Check Verification Status</a>
+        {% endif %}
+        {% if user.role == 'organiser' and user.is_verified %}
+            <br><br>
+            <a href="{% url 'organiser_dashboard' %}" class="btn btn-secondary btn-sm">My Dashboard</a>
+            <a href="{% url 'organiser_analytics' %}" class="btn btn-outline btn-sm">Analytics</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

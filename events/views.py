@@ -12,11 +12,17 @@ def event_list_view(request):
 
 def event_detail_view(request, pk):
     from django.db.models import Q
+    from analytics.models import EventView
+
     event = get_object_or_404(
         Event,
         Q(status='approved') | Q(organiser=request.user) if request.user.is_authenticated else Q(status='approved'),
         pk=pk
     )
+
+    # Record a view
+    EventView.objects.create(event=event)
+
     updates = event.updates.order_by('-created_at')
     return render(request, 'events/event_detail.html', {'event': event, 'updates': updates})
 
