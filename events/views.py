@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Event, EventUpdate
 from .forms import EventForm, EventUpdateForm
+from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
+from .forms import EventForm, EventUpdateForm, EvidenceForm
 
 
 def event_list_view(request):
@@ -104,3 +107,75 @@ def organiser_dashboard_view(request):
 
     events = Event.objects.filter(organiser=request.user).order_by('-created_at')
     return render(request, 'events/organiser_dashboard.html', {'events': events})
+
+
+@staff_member_required
+def start_review(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    if event.status == 'pending':
+        event.status = 'under_review'
+        event.review_started_at = timezone.now()
+        event.save()
+        messages.success(request, 'Event moved to review.')
+    return redirect('event_admin_detail', pk=pk)
+
+
+@staff_member_required
+def add_evidence(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    if request.method == 'POST':
+        form = EvidenceForm(request.POST, request.FILES)
+        if form.is_valid():
+            evidence = form.save(commit=False)
+            evidence.event = event
+            evidence.admin = request.user
+            evidence.save()
+            messages.success(request, 'Evidence recorded.')
+            return redirect('event_admin_detail', pk=pk)
+    else:
+        form = EvidenceForm()
+    return render(request, 'events/add_evidence.html', {'form': form, 'event': event})
+
+
+@staff_member_required
+def decide_event(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+
+    if event.status != 'under_review':
+        messages.error(request, 'Event must be under review before a decision can be made.')
+        return redirect('event_admin_detail', pk=pk)
+
+    if not event.evidence.exists():
+        messages.error(request, 'At least one piece of evidence is required before deciding.')
+        return redirect('event_admin_detail', pk=pk)
+
+    if request.method == 'POST':
+        decision = request.POST.get('decision')
+        if decision == 'approve':
+            event.status = 'approved'
+        elif decision == 'reject':
+            event.status = 'rejected'
+        event.save()
+        messages.success(request, f'Event has been {event.status}.')
+    return redirect('event_admin_detail', pk=pk)
+
+@staff_member_required
+def event_admin_detail(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    form = EvidenceForm()
+    return render(request, 'events/event_admin_detail.html', {'event': event, 'form': form})
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from .models import Event
+
+
+@staff_member_required
+def pending_events(request):
+    pending = Event.objects.filter(status='pending').order_by('date')
+
+    return render(
+        request,
+        'events/pending_events.html',
+        {'pending_events': pending}
+    )

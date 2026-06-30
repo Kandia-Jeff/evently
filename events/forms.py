@@ -1,5 +1,7 @@
 from django import forms
 from .models import Event, EventUpdate
+from django import forms
+from .models import Event, EventEvidence
 
 
 class EventForm(forms.ModelForm):
@@ -26,4 +28,12 @@ class EventUpdateForm(forms.ModelForm):
         fields = ['message']
         widgets = {
             'message': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class EvidenceForm(forms.ModelForm):
+    class Meta:
+        model = EventEvidence
+        fields = ['evidence_type', 'document', 'note']
+        widgets = {
+            'note': forms.Textarea(attrs={'rows': 3}),
         }

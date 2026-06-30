@@ -22,6 +22,7 @@
             {% if user.is_superuser %}
                 <a href="{% url 'admin_analytics' %}">Analytics</a>
                 <a href="{% url 'flag_list' %}">Flags</a>
+                <a href="{% url 'pending_events' %}">Review</a>
             {% endif %} 
             <a href="{% url 'profile' %}">Profile</a>
             <a href="{% url 'logout' %}" class="btn-nav">Logout</a>

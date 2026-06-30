@@ -1,0 +1,80 @@
+{% extends 'home.html' %}
+{% block title %}Review – {{ event.title }}{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h2>{{ event.title }}</h2>
+    <p>Status: <span class="badge badge-{{ event.status }}">{{ event.status }}</span></p>
+</div>
+
+<div class="card">
+    <p><strong>Organiser:</strong> {{ event.organiser.username }}</p>
+    <p><strong>Category:</strong> {{ event.category }}</p>
+    <p><strong>Location:</strong> {{ event.location }}</p>
+    <p><strong>Date:</strong> {{ event.date }}</p>
+    <p><strong>Description:</strong> {{ event.description }}</p>
+
+    {% if event.review_started_at %}
+        <p><strong>Review started:</strong> {{ event.review_started_at }}</p>
+    {% endif %}
+</div>
+
+{% if event.status == 'pending' %}
+    <form method="post" action="{% url 'start_review' event.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">Start Review</button>
+    </form>
+{% endif %}
+
+{% if event.status == 'under_review' %}
+
+    <div class="card">
+        <h3>Evidence Timeline</h3>
+
+        {% if event.evidence.all %}
+            {% for item in event.evidence.all %}
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <span class="feedback-user">{{ item.get_evidence_type_display }}</span>
+                        <span class="feedback-date">{{ item.created_at }}</span>
+                    </div>
+                    <p class="feedback-comment">{{ item.note }}</p>
+                    {% if item.document %}
+                        <a href="{{ item.document.url }}" target="_blank">View Document</a>
+                    {% endif %}
+                    <p class="feedback-date">Logged by: {{ item.admin.username }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No evidence collected yet. Add at least one entry before you can approve or reject.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Add Evidence</h3>
+        <form method="post" action="{% url 'add_evidence' event.pk %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-secondary">Add Evidence</button>
+        </form>
+    </div>
+
+    <form method="post" action="{% url 'decide_event' event.pk %}">
+        {% csrf_token %}
+        <button name="decision" value="approve" type="submit" class="btn btn-success"
+            {% if not event.evidence.all %}disabled{% endif %}>
+            Approve Event
+        </button>
+        <button name="decision" value="reject" type="submit" class="btn btn-danger"
+            {% if not event.evidence.all %}disabled{% endif %}>
+            Reject Event
+        </button>
+    </form>
+
+{% endif %}
+
+{% if event.status == 'approved' or event.status == 'rejected' %}
+    <p>This event has already been {{ event.status }}. Decision is final.</p>
+{% endif %}
+
+{% endblock %}
