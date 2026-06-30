@@ -13,6 +13,8 @@ def register_view(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password1'])
             user.save()
+            from .emails import send_welcome_email
+            send_welcome_email(user)
             login(request, user)
             messages.success(request, f'Welcome to Evently, {user.username}!')
             return redirect('/')
@@ -61,6 +63,9 @@ def verification_submit_view(request):
             user = form.save(commit=False)
             user.verification_status = 'pending'
             user.save()
+            from .emails import send_verification_submitted_email, send_verification_submitted_admin_email
+            send_verification_submitted_email(user)
+            send_verification_submitted_admin_email(user)
             messages.success(request, 'Document submitted. Awaiting admin review.')
             return redirect('/accounts/profile/')
     else:
