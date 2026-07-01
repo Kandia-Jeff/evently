@@ -31,6 +31,7 @@ def event_detail_view(request, pk):
 
 
 @login_required
+@login_required
 def event_create_view(request):
     if request.user.role != 'organiser':
         messages.error(request, 'Only organisers can create events.')
@@ -46,6 +47,8 @@ def event_create_view(request):
             event = form.save(commit=False)
             event.organiser = request.user
             event.save()
+            from accounts.emails import send_event_submitted_admin_email
+            send_event_submitted_admin_email(event)
             messages.success(request, 'Event submitted for admin review.')
             return redirect('organiser_dashboard')
     else:
@@ -140,22 +143,24 @@ def add_evidence(request, pk):
 @staff_member_required
 def decide_event(request, pk):
     event = get_object_or_404(Event, pk=pk)
-
     if event.status != 'under_review':
         messages.error(request, 'Event must be under review before a decision can be made.')
         return redirect('event_admin_detail', pk=pk)
-
     if not event.evidence.exists():
         messages.error(request, 'At least one piece of evidence is required before deciding.')
         return redirect('event_admin_detail', pk=pk)
-
     if request.method == 'POST':
         decision = request.POST.get('decision')
         if decision == 'approve':
             event.status = 'approved'
+            event.save()
+            from accounts.emails import send_event_approved_email
+            send_event_approved_email(event)
         elif decision == 'reject':
             event.status = 'rejected'
-        event.save()
+            event.save()
+            from accounts.emails import send_event_rejected_email
+            send_event_rejected_email(event)
         messages.success(request, f'Event has been {event.status}.')
     return redirect('event_admin_detail', pk=pk)
 
