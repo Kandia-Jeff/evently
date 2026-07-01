@@ -3,10 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
-
-
-def home_view(request):
-    return render(request, 'home.html')
+from core.views import home_view
 
 
 urlpatterns = [

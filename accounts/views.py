@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import RegisterForm, LoginForm, VerificationForm
+from .forms import RegisterForm, LoginForm, VerificationForm, ProfileSetupForm
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -15,6 +15,8 @@ def register_view(request):
             user.save()
             login(request, user)
             messages.success(request, f'Welcome to Evently, {user.username}!')
+            if user.role == 'attendee':
+                return redirect('profile_setup')
             return redirect('/')
     else:
         form = RegisterForm()
@@ -72,3 +74,18 @@ def verification_submit_view(request):
 @login_required
 def verification_status_view(request):
     return render(request, 'accounts/verification_status.html', {'user': request.user})
+
+@login_required
+def profile_setup(request):
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        form = ProfileSetupForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile set up successfully!')
+            return redirect('home')
+    else:
+        form = ProfileSetupForm(instance=profile)
+
+    return render(request, 'accounts/profile_setup.html', {'form': form})
