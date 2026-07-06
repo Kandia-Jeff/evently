@@ -132,13 +132,17 @@ def add_evidence(request, pk):
             evidence = form.save(commit=False)
             evidence.event = event
             evidence.admin = request.user
+            if request.FILES.get('document'):
+                from accounts.utils import hash_document
+                evidence.document_hash = hash_document(
+                    request.FILES['document']
+                )
             evidence.save()
             messages.success(request, 'Evidence recorded.')
             return redirect('event_admin_detail', pk=pk)
     else:
         form = EvidenceForm()
     return render(request, 'events/add_evidence.html', {'form': form, 'event': event})
-
 
 @staff_member_required
 def decide_event(request, pk):

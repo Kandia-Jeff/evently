@@ -63,6 +63,7 @@ class EventEvidence(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='evidence')
     evidence_type = models.CharField(max_length=30, choices=EVIDENCE_TYPE_CHOICES)
     document = models.FileField(upload_to='evidence/', blank=True, null=True)
+    document_hash = models.CharField(max_length=64, blank=True)
     note = models.TextField()
     admin = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -13,7 +13,7 @@
     <p><strong>Location:</strong> {{ event.location }}</p>
     <p><strong>Date:</strong> {{ event.date }}</p>
     <p><strong>Description:</strong> {{ event.description }}</p>
-
+    <a href="{% url 'verify_document_hash' event.organiser.id %}">Verify Document Integrity</a>
     {% if event.review_started_at %}
         <p><strong>Review started:</strong> {{ event.review_started_at }}</p>
     {% endif %}
@@ -36,7 +36,13 @@
                 <div class="feedback-item">
                     <div class="feedback-header">
                         <span class="feedback-user">{{ item.get_evidence_type_display }}</span>
-                        <span class="feedback-date">{{ item.created_at }}</span>
+                        {% if item.document %}
+                        <p class="feedback-date">
+                            <strong>Document Hash (SHA-256):</strong>
+                            <code style="font-size:11px;word-break:break-all;">{{ item.document_hash }}</code>
+                        </p>
+                        {% endif %}
+
                     </div>
                     <p class="feedback-comment">{{ item.note }}</p>
                     {% if item.document %}
