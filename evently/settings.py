@@ -118,6 +118,7 @@ INSTALLED_APPS = [
     'flagging',
     'analytics',
     'core',
+    'blockchain',
 ]   
 
 MIDDLEWARE = [
@@ -195,3 +196,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
 
+INFURA_API_KEY = config('INFURA_API_KEY')
+WALLET_ADDRESS = config('WALLET_ADDRESS')
+WALLET_PRIVATE_KEY = config('WALLET_PRIVATE_KEY')
