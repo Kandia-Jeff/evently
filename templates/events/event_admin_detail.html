@@ -19,6 +19,27 @@
     {% endif %}
 </div>
 
+<div class="card">
+    <h3 style="margin-bottom:12px;">Permit Verification</h3>
+    <p><strong>Permit Number:</strong> {{ event.permit_number|default:"Not provided" }}</p>
+    <p><strong>Issuing Authority:</strong> {{ event.issuing_authority|default:"Not provided" }}</p>
+    <p><strong>Blockchain Verified:</strong>
+        {% if event.permit_verified %}
+            <span class="badge badge-approved">✅ Verified on Blockchain</span>
+        {% else %}
+            <span class="badge badge-rejected">❌ Not Verified</span>
+        {% endif %}
+    </p>
+    {% if event.permit_tx_hash %}
+        <p><strong>Transaction Hash:</strong>
+            <a href="https://sepolia.etherscan.io/tx/{{ event.permit_tx_hash }}" target="_blank" style="word-break:break-all;">
+                {{ event.permit_tx_hash }}
+            </a>
+        </p>
+        <p><strong>Block Number:</strong> {{ event.permit_block_number }}</p>
+    {% endif %}
+</div>
+
 {% if event.status == 'pending' %}
     <form method="post" action="{% url 'start_review' event.pk %}">
         {% csrf_token %}
@@ -42,7 +63,6 @@
                             <code style="font-size:11px;word-break:break-all;">{{ item.document_hash }}</code>
                         </p>
                         {% endif %}
-
                     </div>
                     <p class="feedback-comment">{{ item.note }}</p>
                     {% if item.document %}

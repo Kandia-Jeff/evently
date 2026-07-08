@@ -46,6 +46,25 @@ def event_create_view(request):
         if form.is_valid():
             event = form.save(commit=False)
             event.organiser = request.user
+
+            # Blockchain permit verification
+            permit_number = form.cleaned_data.get('permit_number')
+            issuing_authority = form.cleaned_data.get('issuing_authority')
+
+            if permit_number and issuing_authority:
+                try:
+                    from blockchain.blockchain import verify_permit
+                    result = verify_permit(permit_number, issuing_authority)
+                    event.permit_verified = result['is_valid']
+                    event.permit_tx_hash = result['tx_hash']
+                    event.permit_block_number = result['block_number']
+                    if not result['is_valid']:
+                        messages.warning(request, f'Permit could not be verified on the blockchain. Transaction recorded: {result["tx_hash"]}. Your event has been submitted but admin will review the permit manually.')
+                    else:
+                        messages.success(request, f'Permit verified on blockchain. Transaction: {result["tx_hash"]}')
+                except Exception as e:
+                    messages.warning(request, 'Blockchain verification temporarily unavailable. Event submitted for manual review.')
+
             event.save()
             from accounts.emails import send_event_submitted_admin_email
             send_event_submitted_admin_email(event)

@@ -100,7 +100,14 @@ def register_permit(permit_number, issuing_authority):
 def verify_permit(permit_number, issuing_authority):
     w3, contract = get_contract()
     account = w3.eth.account.from_key(settings.WALLET_PRIVATE_KEY)
-    
+
+    # First check the result using call() — no gas needed, instant
+    is_valid = contract.functions.verifyPermit(
+        permit_number,
+        issuing_authority
+    ).call({'from': account.address})
+
+    # Then record the verification on the blockchain as a transaction
     transaction = contract.functions.verifyPermit(
         permit_number,
         issuing_authority
@@ -110,17 +117,11 @@ def verify_permit(permit_number, issuing_authority):
         'gas': 200000,
         'gasPrice': w3.eth.gas_price,
     })
-    
+
     signed = account.sign_transaction(transaction)
     tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
-    
-    # Read the result
-    is_valid = contract.functions.verifyPermit(
-        permit_number,
-        issuing_authority
-    ).call()
-    
+
     return {
         'is_valid': is_valid,
         'tx_hash': receipt.transactionHash.hex(),
